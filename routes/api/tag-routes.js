@@ -3,14 +3,12 @@ const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
 
-//TODO JOIN PRODUCT DATA IN GET ROUTES
 
-//TODO JOIN product data.
 router.get('/', async (req, res) => {
   // find all tags
   // be sure to include its associated Product data
   try {
-    const allTags = await Tag.findAll();
+    const allTags = await Tag.findAll({ include: [{ model: Product }] });
     res.status(200).json(allTags);
   } catch (err) {
     res.status(500).json(err);
@@ -23,7 +21,7 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Product data
   try {
     const singleTag = await Tag.findByPk(req.params.id, {
-      include: [{ model: Product, through: ProductTag, as: 'tagged_products' }]
+      include: [{ model: Product }]
     });
        if (!singleTag) {
       res.status(404).json({ message: 'No Tag found!' });
@@ -59,7 +57,7 @@ router.put('/:id', async (req, res) => {
       res.status(404).json({ message: 'no Tag found!' });
       return;
     }
-    res.status(200).json(updateTag);
+    res.status(200).json('Updated Tag!');
   } catch (err) {
     res.status(500).json(err);
   }

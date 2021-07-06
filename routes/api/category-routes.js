@@ -1,15 +1,14 @@
 const router = require('express').Router();
-const { Category, Product, ProductTag } = require('../../models');
+const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
-//TODO: JOIN ASSOCIATED DATA
 
 router.get('/', async (req, res) => {
   // find all categories
   // be sure to include its associated Products
   try {
     const allCategories = await Category.findAll({
-      // include: [{ model: Tag, through: ProductTag, as: 'product_tag'}]
+      include: [{ model: Product }]
     });
     res.status(200).json(allCategories);
   } catch (err) {
@@ -22,7 +21,7 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Products
   try {
     const singleCategory = await Category.findByPk(req.params.id, {
-      // include: [{ model: Product, through: Product, as: 'categorized_products'}]
+      include: [{ model: Product }]
     });
        if (!singleCategory) {
       res.status(404).json({ message: 'No Category found!' });
@@ -56,7 +55,7 @@ router.put('/:id', async (req, res) => {
       res.status(404).json({ message: 'no Category found!' });
       return;
     }
-    res.status(200).json(updateCatgeory);
+    res.status(200).json('Updated Category!');
   } catch (err) {
     res.status(500).json(err);
   }
@@ -70,7 +69,7 @@ router.delete('/:id', async (req, res) => {
       res.status(404).json({ message: 'No Category found!' });
       return;
   }
-  res.status(200).json('Deleted Category!');
+  res.status(200).json(`Deleted Category!`);
 } catch (err) {
   res.status(500).json(err);
 }
